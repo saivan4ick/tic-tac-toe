@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe</title>
+</head>
+<body>
+    <div class="content">
+
+        <div class="currentPlayer">
+            <span>Now walking: <span id="curPlyr">X</span></span>
+        </div>
+
+        <div id="area"></div>
+
+        <div class="stat">
+            <table>
+                <th colspan="2">Statistics</th>
+                <tr>
+                    <td>X</td>
+                    <td><span id="sX">0</span></td>
+                </tr>
+                <tr>
+                    <td>O</td>
+                    <td><span id="sO">0</span></td>
+                </tr>
+                <tr>
+                    <td>Draws</td>
+                    <td><span id="sD">0</span></td>
+                </tr>
+            </table>
+        </div>
+        <style>
+            * {margin: 0; padding: 0;}
+
+.content {
+    display: flex;
+    margin: 100px 50px 50px 50px;
+    font-family: sans-serif;
+}
+
+#area {
+    width: 156px;
+    border: 1px solid #000;
+    margin: 0 auto;
+    font-size: 0;
+}
+
+.cell {
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    display: inline-block;
+    font-size: 26px;
+    border: 1px solid #000;
+    cursor: pointer;
+    vertical-align: middle;
+    transition: background .1s;
+}
+
+.cell:hover {
+    background-color: #F1F1F1;
+}
+
+.currentPlayer {
+    width: 140px;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+}
+
+.stat {
+    display: flex;
+    align-items: center;
+    font-size: 18px;
+}
+
+.stat table {
+    border-collapse: collapse;
+}
+
+.stat table, .stat th, .stat td {
+    border: 1px solid #000;
+    padding: 5px;
+    text-align: center;
+}
+        </style>
+        <script>
+            var area = document.getElementById('area');
+var cell = document.getElementsByClassName('cell');
+var currentPlayer = document.getElementById('curPlyr');
+
+var player = "x";
+var stat = {
+    'x': 0,
+    'o': 0,
+    'd': 0
+}
+var winIndex = [
+    [1,2,3],
+    [4,5,6],
+    [7,8,9],
+    [1,4,7],
+    [2,5,8],
+    [3,6,9],
+    [1,5,9],
+    [3,5,7]
+];
+
+for(var i = 1; i <= 9; i++) {
+    area.innerHTML += "<div class='cell' pos=" + i + "></div>";
+}
+
+for (var i = 0; i< cell.length; i++) {
+    cell[i].addEventListener('click', cellClick, false);
+}
+
+function cellClick() {
+
+    var data = [];
+    
+    if(!this.innerHTML) {
+        this.innerHTML = player;
+    }else {
+        alert("Cell busy");
+        return;
+    }
+
+    for(var i in cell){
+        if(cell[i].innerHTML == player){
+            data.push(parseInt(cell[i].getAttribute('pos')));
+        }
+    }
+
+    if(checkWin(data)) {
+        stat[player] += 1;
+        restart("Won: " + player);
+    }else {
+        var draw = true;
+        for(var i in cell) {
+            if(cell[i].innerHTML == '') draw = false;
+        }
+        if(draw) {
+            stat.d += 1;
+            restart("Draws");
+        }
+    }
+
+    player = player == "x" ? "o" : "x";
+    currentPlayer.innerHTML = player.toUpperCase();
+}
+
+function checkWin(data) {
+    for(var i in winIndex) {
+        var win = true;
+        for(var j in winIndex[i]) {
+            var id = winIndex[i][j];
+            var ind = data.indexOf(id);
+
+            if(ind == -1) {
+                win = false
+            }
+        }
+
+        if(win) return true;
+    }
+    return false;
+}
+
+function restart(text) {
+    
+    alert(text);
+    for(var i = 0; i < cell.length; i++) {
+        cell[i].innerHTML = '';
+    }
+    updateStat();
+}
+
+function updateStat() {
+    document.getElementById('sX').innerHTML = stat.x;
+    document.getElementById('sO').innerHTML = stat.o;
+    document.getElementById('sD').innerHTML = stat.d;
+}
+        </script>
+    </div>
+</body>
+</html>
